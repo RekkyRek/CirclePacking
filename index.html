@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Canvas</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.6/p5.min.js" charset="utf-8"></script>
+</head>
+<body style="margin: 0;overflow:hidden">
+  <script type="text/javascript">
+
+    var circles = [];
+    var img;
+
+    function setup() {
+      img = loadImage("https://i.ytimg.com/vi/sr_vL2anfXA/maxresdefault.jpg");
+      createCanvas(window.innerWidth, window.innerHeight);
+      for (var i = 0; i < 10; i++) {
+        circles.push(new circle());
+        circles[circles.length-1].onmake()
+      }
+    }
+
+    function draw() {
+      background(255);
+      noStroke()
+      fill(0)
+      for (var i = 0; i < circles.length; i++) {
+        ellipse(circles[i].x, circles[i].y, circles[i].r, circles[i].r);
+        if(circles[i].cangrow) {
+          circles[i].grow()
+        }
+      }
+    }
+
+    function circle() {
+      this.x = random(window.innerWidth);
+      this.y = random(window.innerHeight);
+      this.r = 5;
+      this.cangrow = true;
+
+      this.onmake = () => {
+        for (var i = 0; i < circles.length; i++) {
+          if(dist(this.x, this.y, circles[i].x, circles[i].y) < this.r/2 + circles[i].r/2 - 1 && this.x != circles[i].x && this.y != circles[i].y) {
+            circles.splice(circles.indexOf(this), 1);
+            if(circles.length < 500) {
+              circles.push(new circle())
+              circles[circles.length-1].onmake()
+            }
+          }
+        }
+      }
+
+      this.grow = () => {
+        for (var i = 0; i < circles.length; i++) {
+          if(dist(this.x, this.y, circles[i].x, circles[i].y) < this.r/2 + circles[i].r/2 + 1 && this.x != circles[i].x && this.y != circles[i].y) {
+            if(dist(this.x, this.y, circles[i].x, circles[i].y) < this.r/2 + circles[i].r/2 - 1 && this.x != circles[i].x && this.y != circles[i].y) {
+              circles.splice(circles.indexOf(this), 1);
+            }
+            this.cangrow = false;
+            if(circles.length < 500) {
+              circles.push(new circle())
+              circles[circles.length-1].onmake()
+            }
+          }
+        }
+        if(this.cangrow) {
+          this.r += 4;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
